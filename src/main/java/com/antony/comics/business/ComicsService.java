@@ -1,6 +1,7 @@
 package com.antony.comics.business;
 
 import com.antony.comics.business.exception.ObjectNotFoundException;
+import com.antony.comics.business.exception.ObjetoJaCadastradoException;
 import com.antony.comics.client.MarvelClient;
 import com.antony.comics.entity.ComicEntity;
 import com.antony.comics.entity.UsuarioEntity;
@@ -34,10 +35,15 @@ public class ComicsService {
     Long dataHoraAtual = System.currentTimeMillis();
 
     public ComicEntity cadastrar(Integer id) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        if(repository.findById(id).isPresent()){
+            throw new ObjetoJaCadastradoException("Comic de ID: "+ id +" já cadastrado");
+        }
         String jsonComic = marvelClient.buscarComics(id, dataHoraAtual.toString(),
                 publicApiKey, gerarHash());
         ComicEntity entity = jsonToEntity(jsonComic);
-        entity.setDiaDesconto(diaDesconto(entity.getIsbn()));
+        if(!entity.getIsbn().equals("")) {
+            entity.setDiaDesconto(diaDesconto(entity.getIsbn()));
+        }
         return repository.save(entity);
     }
 
@@ -78,21 +84,21 @@ public class ComicsService {
         return entity;
     }
 
-    private Integer diaDesconto(String isbn){
-        Integer ultimoNumero = Integer.parseInt(isbn.substring(isbn.length()-1));
-        if(ultimoNumero.equals(0) || ultimoNumero.equals(1)){
+    private Integer diaDesconto(String isbn) {
+        Integer ultimoNumero = Integer.parseInt(isbn.substring(isbn.length() - 1));
+        if (ultimoNumero.equals(0) || ultimoNumero.equals(1)) {
             return 2;
         }
-        if(ultimoNumero.equals(2) || ultimoNumero.equals(3)){
+        if (ultimoNumero.equals(2) || ultimoNumero.equals(3)) {
             return 3;
         }
-        if(ultimoNumero.equals(4) || ultimoNumero.equals(5)){
+        if (ultimoNumero.equals(4) || ultimoNumero.equals(5)) {
             return 4;
         }
-        if(ultimoNumero.equals(6) || ultimoNumero.equals(7)){
+        if (ultimoNumero.equals(6) || ultimoNumero.equals(7)) {
             return 5;
         }
-        if(ultimoNumero.equals(8) || ultimoNumero.equals(9)){
+        if (ultimoNumero.equals(8) || ultimoNumero.equals(9)) {
             return 6;
         }
         return null;

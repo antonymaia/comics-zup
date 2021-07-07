@@ -21,9 +21,7 @@ public class ComicEntity {
     private String isbn;
     @Column(nullable = false, length = 1000)
     private String descricao;
-    @Column(nullable = false)
     private Integer diaDesconto;
-    @Column(nullable = false)
     private boolean descontoAtivo;
 
     public ComicEntity(){}

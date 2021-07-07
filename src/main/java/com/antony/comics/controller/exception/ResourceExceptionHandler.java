@@ -3,7 +3,8 @@ package com.antony.comics.controller.exception;
 import com.antony.comics.business.exception.CpfCadastrado;
 import com.antony.comics.business.exception.EmailCadastrado;
 import com.antony.comics.business.exception.ObjectNotFoundException;
-import javassist.NotFoundException;
+import com.antony.comics.business.exception.ObjetoJaCadastradoException;
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -36,6 +37,17 @@ public class ResourceExceptionHandler {
     }
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request){
+        StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+    @ExceptionHandler(ObjetoJaCadastradoException.class)
+    public ResponseEntity<StandardError> objetoJaCadastrado(ObjetoJaCadastradoException e, HttpServletRequest request){
+        StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+    }
+
+    @ExceptionHandler(FeignException.NotFound.class)
+    public ResponseEntity<StandardError> feignExceptionNotFound(FeignException.NotFound e, HttpServletRequest request){
         StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
