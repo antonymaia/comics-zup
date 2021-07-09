@@ -2,10 +2,10 @@ package com.antony.comics.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
 
 public class ComicDTO {
 
-    private Integer id;
     private String titulo;
     private double preco;
     private String autores;
@@ -17,8 +17,7 @@ public class ComicDTO {
     public ComicDTO() {
     }
 
-    public ComicDTO(Integer id, String titulo, double preco, String autores, String isbn, String descricao, Integer diaDesconto, boolean descontoAtivo) {
-        this.id = id;
+    public ComicDTO( String titulo, double preco, String autores, String isbn, String descricao, Integer diaDesconto, boolean descontoAtivo) {
         this.titulo = titulo;
         this.preco = preco;
         this.autores = autores;
@@ -26,14 +25,6 @@ public class ComicDTO {
         this.descricao = descricao;
         this.diaDesconto = diaDesconto;
         this.descontoAtivo = descontoAtivo;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitulo() {

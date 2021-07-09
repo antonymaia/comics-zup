@@ -8,7 +8,6 @@ import java.util.List;
 
 public class UsuarioDTO {
 
-    private Integer id;
     @NotBlank(message = "Campo nome obrigatório")
     private String nome;
     @Email(message = "E-mail inválido")
@@ -20,20 +19,11 @@ public class UsuarioDTO {
     private String dataNascimento;
     private List<ComicDTO> comics;
 
-    public UsuarioDTO(Integer id, String nome, String email, String cpf, String dataNascimento) {
-        this.id = id;
+    public UsuarioDTO(String nome, String email, String cpf, String dataNascimento) {
         this.nome = nome;
         this.email = email;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getNome() {

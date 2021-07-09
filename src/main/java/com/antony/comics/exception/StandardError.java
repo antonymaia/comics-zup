@@ -1,4 +1,4 @@
-package com.antony.comics.controller.exception;
+package com.antony.comics.exception;
 
 import java.io.Serializable;
 
@@ -15,7 +15,6 @@ public class StandardError implements Serializable {
         this.msg = msg;
         this.timeStamp = timeStamp;
     }
-
     public Integer getStatusHttp() {
         return statusHttp;
     }
@@ -39,6 +38,4 @@ public class StandardError implements Serializable {
     public void setTimeStamp(Long timeStamp) {
         this.timeStamp = timeStamp;
     }
-
-
 }

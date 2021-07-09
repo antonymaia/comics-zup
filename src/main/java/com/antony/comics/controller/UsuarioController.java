@@ -5,6 +5,7 @@ import com.antony.comics.dto.UsuarioDTO;
 import com.antony.comics.entity.UsuarioEntity;
 import com.antony.comics.mapper.UsuarioMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
-@Controller
+@RestController
 @RequestMapping(path = "/usuario")
 public class UsuarioController {
 
@@ -22,10 +23,8 @@ public class UsuarioController {
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     ResponseEntity<UsuarioDTO> cadastrar(@Valid @RequestBody UsuarioDTO dto){
-       UsuarioEntity usuarioEntity = service.cadastrar(UsuarioMapper.toEntity(dto));
-       URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-               .path("/{id}").buildAndExpand(usuarioEntity.getId()).toUri();
-       return  ResponseEntity.created(uri).build();
+       service.cadastrar(UsuarioMapper.toEntity(dto));
+       return  ResponseEntity.status(HttpStatus.CREATED).build();
    }
    @GetMapping( value = "/{id}")
     ResponseEntity<UsuarioDTO> buscar(@PathVariable("id") Integer id){

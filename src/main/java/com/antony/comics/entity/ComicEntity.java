@@ -8,7 +8,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "COMICS")
 public class ComicEntity {
-
     @Id
     private Integer id;
     @Column(nullable = false)
@@ -25,7 +24,6 @@ public class ComicEntity {
     private boolean descontoAtivo;
 
     public ComicEntity(){}
-
     public ComicEntity(Integer id, String titulo, double preco, String autores, String isbn, String descricao, Integer diaDesconto, boolean descontoAtivo) {
         this.id = id;
         this.titulo = titulo;

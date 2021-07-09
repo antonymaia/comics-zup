@@ -7,7 +7,6 @@ import java.util.List;
 @Entity
 @Table(name = "USUARIO")
 public class UsuarioEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,7 +24,6 @@ public class UsuarioEntity {
     private List<ComicEntity> comics;
 
     public UsuarioEntity(){}
-
     public UsuarioEntity(Integer id, String nome, String email, String cpf, String dataNascimento) {
         this.id = id;
         this.nome = nome;

@@ -11,7 +11,6 @@ import java.util.List;
 public class UsuarioMapper {
     public static UsuarioDTO toDto(UsuarioEntity entity){
         var dto = new UsuarioDTO(
-                entity.getId(),
                 entity.getNome(),
                 entity.getEmail(),
                 entity.getCpf(),
@@ -28,7 +27,7 @@ public class UsuarioMapper {
     }
     public static UsuarioEntity toEntity(UsuarioDTO dto) {
         var entity = new UsuarioEntity(
-                dto.getId(),
+                null,
                 dto.getNome(),
                 dto.getEmail(),
                 dto.getCpf(),

@@ -1,10 +1,9 @@
 package com.antony.comics.business;
-
-import com.antony.comics.business.exception.ObjectNotFoundException;
-import com.antony.comics.business.exception.ObjetoJaCadastradoException;
 import com.antony.comics.client.MarvelClient;
 import com.antony.comics.entity.ComicEntity;
 import com.antony.comics.entity.UsuarioEntity;
+import com.antony.comics.exception.BusinessException;
+import com.antony.comics.mapper.ComicMapper;
 import com.antony.comics.repository.ComicsRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,25 +25,23 @@ public class ComicsService {
     @Autowired
     private ComicsRepository repository;
     @Autowired
-    UsuarioService usuarioService;
-
+    private UsuarioService usuarioService;
     @Value("${publicApiKey}")
     private String publicApiKey;
     @Value("${privateApiKey}")
     private String privateApiKey;
-    Long dataHoraAtual = System.currentTimeMillis();
 
-    public ComicEntity cadastrar(Integer id) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        if(repository.findById(id).isPresent()){
-            throw new ObjetoJaCadastradoException("Comic de ID: "+ id +" já cadastrado");
+    public void cadastrar(Integer id) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        if (repository.findById(id).isPresent()) {
+            throw new BusinessException("Comic de ID: " + id + " já cadastrado");
         }
-        String jsonComic = marvelClient.buscarComics(id, dataHoraAtual.toString(),
+        String jsonComic = marvelClient.buscarComics(id, System.currentTimeMillis(),
                 publicApiKey, gerarHash());
-        ComicEntity entity = jsonToEntity(jsonComic);
-        if(!entity.getIsbn().equals("")) {
+        ComicEntity entity = ComicMapper.jsonToEntity(jsonComic);
+        if (!entity.getIsbn().equals("")) {
             entity.setDiaDesconto(diaDesconto(entity.getIsbn()));
         }
-        return repository.save(entity);
+        repository.save(entity);
     }
 
     public void cadastrarComicDoUsuario(Integer idUsuario, Integer idComic) {
@@ -55,33 +52,14 @@ public class ComicsService {
 
     private ComicEntity buscar(Integer idComic) {
         Optional<ComicEntity> entity = repository.findById(idComic);
-        return entity.orElseThrow(() -> new ObjectNotFoundException(" Comic não encontrado: ID: " + idComic));
+        return entity.orElseThrow(() -> new BusinessException(" Comic não encontrado: ID: " + idComic));
     }
 
     private String gerarHash() throws NoSuchAlgorithmException {
         byte[] arrayByte = MessageDigest.getInstance("MD5")
-                .digest((dataHoraAtual + privateApiKey + publicApiKey)
+                .digest((System.currentTimeMillis() + privateApiKey + publicApiKey)
                         .getBytes(StandardCharsets.UTF_8));
         return new BigInteger(1, arrayByte).toString(16);
-    }
-
-    private ComicEntity jsonToEntity(String json) {
-        ComicEntity entity = new ComicEntity();
-        JSONObject retornoJson = new JSONObject(json);
-        JSONObject comics = new JSONObject(retornoJson.getJSONObject("data").getJSONArray("results").getJSONObject(0).toString());
-        JSONArray jsonArrayAutores = comics.getJSONObject("creators").getJSONArray("items");
-        entity.setId(comics.getInt("id"));
-        entity.setTitulo(comics.getString("title"));
-        entity.setPreco(comics.getJSONArray("prices").getJSONObject(0).getDouble("price"));
-        entity.setIsbn(comics.getString("isbn"));
-        entity.setDescricao(comics.getString("description"));
-        StringBuilder stringAutores = new StringBuilder();
-        for (int i = 0; i < jsonArrayAutores.length(); i++) {
-            JSONObject autorJson = new JSONObject(jsonArrayAutores.getJSONObject(i).toString());
-            stringAutores.append(autorJson.getString("name")).append(", ");
-        }
-        entity.setAutores(stringAutores.toString());
-        return entity;
     }
 
     private Integer diaDesconto(String isbn) {
@@ -103,6 +81,5 @@ public class ComicsService {
         }
         return null;
     }
-
 }
  
